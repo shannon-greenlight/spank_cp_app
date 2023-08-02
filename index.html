@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' ; script-src 'self' " />
+    <title>Spankulator Control Panel v1.0</title>
+    <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="css/cp.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="css/serial_port.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+    <link rel="stylesheet" id="twentyseventeen-block-style-css" href="css/blocks.css" type="text/css" media="all" />
+</head>
+
+<body>
+    <div id="error"></div>
+    <div id="ports">
+        <h1>Welcome to the Spankulator Control Panel</h1>
+        <h2>Please Choose a Port</h2>
+        <div id="ports_table"></div>
+    </div>
+    <div id="control_div">
+        <div id="head_div">
+            <img />
+            <h3 id="device_name"></h3>
+            <button id="refresh_button" title="Refresh Data">
+                &circlearrowright;
+            </button>
+        </div>
+        <div id="action_div">
+            <div id="fxn_container">
+                <label id="fxn_label" for="fxn_div">Function</label>
+                <div id="fxn_div" class="display_box">
+                    <div id="fxn_buttons"></div>
+                    <div id="fxn_control_buttons" class="control_buttons">
+                        <button id="downfxn_button" class="cmd_button top_button" data-ref="-">
+                            Prev
+                        </button>
+                        <button id="upfxn_button" class="cmd_button top_button" data-ref="+">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="display_container">
+                <label id="param_label" for="display_div">Parameters</label>
+                <div id="display_div" class="display_box">
+                    <h2 id="spank_fxn">Fxn</h2>
+                    <div id="param_box">
+                        <div id="meas_div">
+                            <canvas id="canvas" height="200" width="415"></canvas>
+                        </div>
+                        <div id="params"></div>
+                        <div id="param_buttons">
+                            <button id="up_button" class="cmd_button" data-ref="[A" title="Previous Parameter">
+                                &uarr;
+                            </button>
+                            <button id="down_button" class="cmd_button" data-ref="[B" title="Next Parameter">
+                                &darr;
+                            </button>
+                        </div>
+                        <div id="lr_buttons">
+                            <button id="left_left_button" class="cmd_button" data-ref=":0" title="Select First Digit">
+                                &#8606;
+                            </button>
+                            <button id="left_button" class="cmd_button" data-ref="[D" title="Select Previous Digit">
+                                &larr;
+                            </button>
+                            <button id="right_button" class="cmd_button" data-ref="[C" title="Select Next Digit">
+                                &rarr;
+                            </button>
+                            <button id="right_right_button" class="cmd_button" data-ref=":99" title="Select Last Digit">
+                                &#x21A0;
+                            </button>
+                            <button id="upparam_button" class="cmd_button ud_button" data-ref="u"
+                                title="Increment Selected Digit">
+                                Up
+                            </button>
+                            <button id="downparam_button" class="cmd_button ud_button" data-ref="d"
+                                title="Decrement Selected Digit">
+                                Dn
+                            </button>
+                        </div>
+                    </div>
+                    <div id="input_div">
+                        <div class="param_div">
+                            <div id="param_head" class="param param_head">
+                                <strong></strong>
+                            </div>
+                            <!--                        <div id="param_value" class="param">-->
+                            <!--                            <input id="param_input" type="number" min="2" max="99" value="99">-->
+                            <!--                        </div>-->
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="middle_controls">
+                <div id="trigger_controls" class="">
+                    <label for="trigger_buttons">Digital</label>
+                    <div id="trigger_buttons" class="display_box">
+                        <div class="tog_label">Repeat</div>
+                        <div class="tog_label">Trigger</div>
+                        <button id="repeat_on" class="lighted_button led_button" data-ref="&"
+                            title="Toggle Repeat"></button>
+                        <button id="trigger_on" class="lighted_button led_button" data-ref="!"
+                            title="Send Trigger Command"></button>
+
+                        <div id="trig_label_div">
+                            <div class="tog_label">Trig Out</div>
+                        </div>
+                        <div id="tog_label_div">
+                            <div class="tog_label">Tog Out</div>
+                        </div>
+                        <button id="trigger_button" class="lighted_button led_button" data-ref="G2"
+                            title="Toggle Trig Out"></button>
+                        <button id="tog_button" class="lighted_button led_button" data-ref="T2"
+                            title="Toggle Tog Out"></button>
+
+                        <div id="trig_label_div">
+                            <div class="tog_label">Ext Trig</div>
+                        </div>
+                        <div id="tog_label_div">
+                            <div class="tog_label">Clock</div>
+                        </div>
+                        <button id="ext_trig_button" class="lighted_button" data-ref="E2">
+                            Enabled
+                        </button>
+                        <button id="clk_button" class="lighted_button" data-ref="K2">
+                            Internal
+                        </button>
+                    </div>
+                </div>
+                <div id="adj_controls">
+                    <label for="adj_div">Analog: <span id="analog_label"></span></label>
+                    <div id="adj_div" class="display_box">
+                        <div class="slider_input_div" label="Value" max="dac_fs" item="cv_val" cmd="c"></div>
+                        <div class="slider_input_div" label="Scale" max="adc_fs" item="scale" cmd="S"></div>
+                        <div class="slider_input_div" label="Offset" max="adc_fs" item="offset" cmd="O"></div>
+                    </div>
+                </div>
+                <div id="macro_controls">
+                    <label for="macro">Macro</label>
+                    <div id="macro_container" class="display_box">
+                        <textarea name="macro" id="macro"></textarea>
+                        <div id="macro_buttons">
+                            <button id="rec_macro" class="cmd_button" title="Click to Start Recording">
+                                Record
+                            </button>
+                            <button id="exe_macro" class="cmd_button" title="Click to Play">
+                                Play
+                            </button>
+                            <button id="clr_macro" class="cmd_button" title="Click to Clear Macro">
+                                Erase
+                            </button>
+                            <button id="rec_state" class="indicator">&gt;</button>
+                            <button id="play_state" class="indicator">&gt;</button>
+                            <button id="erase_state" class="indicator">&nbsp;</button>
+                        </div>
+                        <div id="snapshot_button_div">
+                            <button id="take_snapshot" class="cmd_button" title="Click to take Snapshot">
+                                Take Snapshot
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- 
+renderer.js will be executed in the renderer process for index.html.
+All of the Node.js APIs are available in this process.
+ -->
+<script src="./serial_port.js"></script>
+<script src="./renderer.js"></script>
+
+</html>
