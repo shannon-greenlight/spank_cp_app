@@ -10,8 +10,23 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shannon-greenlight/spank_cp_app.git"
+  },
+  "keywords": [
+    "Eurorack",
+    "Greenface",
+    "Labs",
+    "Synthesizer",
+    "Spankulator"
+  ],
   "author": "Shannon Vance",
   "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/shannon-greenlight/spank_cp_app/issues"
+  },
+  "homepage": "https://github.com/shannon-greenlight/spank_cp_app#readme",
   "devDependencies": {
     "@electron-forge/cli": "^6.2.1",
     "@electron-forge/maker-deb": "^6.2.1",
