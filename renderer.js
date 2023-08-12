@@ -1,3 +1,5 @@
+$ = jQuery
+
 let dbugger = {
   debug_on: false,
   print: function (s, force) {
@@ -6,6 +8,8 @@ let dbugger = {
     }
   },
 }
+
+let the_macro
 
 const out_fs = 128 / 12
 const out_offset = out_fs / 2
@@ -23,8 +27,7 @@ function display_param(data) {
   const is_selected = data.selected === "true"
   const selected_class = is_selected ? " selected" : ""
   let control = "<div class='param_div" + selected_class + "' >"
-  control +=
-    " <div class='param param_head'><label>" + data.label + "</label></div>"
+  control += " <div class='param param_head'><label>" + data.label + "</label></div>"
   control += " <div class='param param_val " + data.type + selected_class + "'>"
   switch (data.type) {
     case "radio":
@@ -37,8 +40,7 @@ function display_param(data) {
         control += ' type="radio"'
         // this prevents radio button from jumping around
         if (data.cmd === "p") {
-          if ($(`input[name=${input_name}][value=${i}]:checked`).length)
-            control += " checked "
+          if ($(`input[name=${input_name}][value=${i}]:checked`).length) control += " checked "
         } else {
           if (data.value === values[i]) control += " checked "
         }
@@ -62,10 +64,7 @@ function display_param(data) {
       control += ' value="' + data_value + '" />'
       control += "<div>"
       control += dval.slice(0, data.dig_num)
-      control += `<span class="${hilight}">${dval.substr(
-        data.dig_num,
-        1
-      )}</span>${tail}</div>`
+      control += `<span class="${hilight}">${dval.substr(data.dig_num, 1)}</span>${tail}</div>`
       control += "</div>"
       break
     default:
@@ -78,16 +77,36 @@ function display_param(data) {
       control += ' value="' + data.value + '" />'
 
       control += "<div class='param_body'>"
-      if (
-        data.selected === "true" &&
-        (data.type === "number" || data.type === "text")
-      ) {
-        let n = data_value
-        if (data.type === "number") {
+      let n = data_value
+      let plussign = data.dp > 0 || data.min < 0 ? "+" : " "
+      plussign = data.value < 0 ? "-" : plussign
+      if (data.type === "number") {
+        if (data.dp === "0") {
           n = zeroPad(Math.abs(data_value), data.num_digits)
+        } else {
+          dbugger.print(`Data Value: ${data_value}`, false)
+          dbugger.print(`dig_num: ${data.dig_num}`, false)
+          // n = data_value<0 ? "-" : "+"
+          let divisor = Math.pow(10, data.dp)
+          let int_part = Math.floor(Math.abs(data_value) / divisor)
+          if (data.max >= 10000) {
+            int_part = zeroPad(int_part, 2)
+            if (data.dig_num > 0) data.dig_num--
+            dbugger.print(`dig_num2: ${data.dig_num}`, false)
+          }
+          let frac_part = zeroPad(Math.abs(data_value) % divisor, data.dp)
+          n = int_part.toString()
+          n += "."
+          n += frac_part
+          dbugger.print(`n: ${n}`, false)
         }
+      } else {
+        plussign = ""
+      }
+      dbugger.print(`n: ${n}`, false)
+      if (data.selected === "true" && (data.type === "number" || data.type === "text")) {
         tail = n.slice(parseInt(data.dig_num) + 1)
-        control += data.value < 0 ? "-" : " "
+        control += plussign
         control += n.slice(0, data.dig_num)
         control +=
           "<span class='hilight'>" +
@@ -96,7 +115,7 @@ function display_param(data) {
           tail +
           "</div><!-- end param_body -->"
       } else {
-        control += data_value + "</div><!-- end param_body -->"
+        control += plussign + n + "</div><!-- end param_body -->"
       }
 
       control += "</div>"
@@ -167,42 +186,22 @@ function widget(data) {
  You can do lots of things through this interface that you can't do from the front panel.
  And you don't have to wade through patch cords to get to the controls.`
   $("#head_div img").attr("title", bonk_title)
-  const meas_div = $("#meas_div")
-  const the_canvas = $("#canvas")
   let title = $("#head_div img").attr("title").toString()
   title = title.replace("Spanky", data.device_name)
-  // title.replace("Spanky","Hoser")
   dbugger.print(title, false)
   $("#head_div img").attr("title", title)
   $("#device_name").html(`"${data.device_name.trim()}"`)
   // $("#spank_fxn").html("<span class='fxn_head'> "+data.fxn+"</span>");
   $("#param_label").html(data.fxn + " Parameters")
-  $("#input_div .param_div").append(
-    '<div id="param_value" class="param"></div>'
-  )
+  $("#input_div .param_div").append('<div id="param_value" class="param"></div>')
 
-  $("#repeat_on").css(
-    "background-color",
-    data.repeat_on === "ON" ? "#fbd310" : "#aaa"
-  )
-  $("#trigger_on").css(
-    "background-color",
-    data.triggered === "ON" ? "Red" : "#aaa"
-  )
-  $("#trigger_button").css(
-    "background-color",
-    data.gate === "ON" ? "Green" : "#aaa"
-  )
-  $("#tog_button").css(
-    "background-color",
-    data.toggle === "ON" ? "Blue" : "#aaa"
-  )
+  $("#repeat_on").css("background-color", data.repeat_on === "ON" ? "#fbd310" : "#aaa")
+  $("#trigger_on").css("background-color", data.triggered === "ON" ? "Red" : "#aaa")
+  $("#trigger_button").css("background-color", data.gate === "ON" ? "Green" : "#aaa")
+  $("#tog_button").css("background-color", data.toggle === "ON" ? "Blue" : "#aaa")
   $("#ext_trig_button")
     .html(data.ext_trigger_disable)
-    .css(
-      "background-color",
-      data.ext_trigger_disable === "enabled" ? "Green" : "#aaa"
-    )
+    .css("background-color", data.ext_trigger_disable === "enabled" ? "Green" : "#aaa")
   $("#clk_button")
     .html(data.clock)
     .css("background-color", data.clock === "internal" ? "Green" : "orange")
@@ -214,45 +213,13 @@ function widget(data) {
     legal_values = data.sequence.legal_values
   }
   if (data.message && data.fxn !== "User") {
-    const wave_arr = data.message.split(", ")
-    const wave_arr_length = wave_arr.length
-    // console.log(wave_arr);
-    // console.log("array count: "+wave_arr_length);
     if (data.fxn === "LFO") {
-      // draw a waveform here
-      // meas_div.width(400);
-      // meas_div.height(200);
-      // const cwidth = meas_div.width();
-      // const cheight = meas_div.height()+2;
-      // let canvas=`<canvas id="canvas" width="${cwidth}" height="${cheight}" />`;
-      // let canvas=`<canvas id="canvas" width="400px" height="${cheight}" />`;
-      // meas_div.html(canvas);
-      // $("#canvas").width(cwidth)
-      // $("#canvas").height(cheight)
-      the_canvas.show()
-      meas_div.show()
+      waveform_data = data.message.split(", ")
       setTimeout(function () {
-        const cwidth = the_canvas.width()
-        const cheight = the_canvas.height()
-        let calc_w = function (i) {
-          return parseInt((i / wave_arr_length) * cwidth, 10)
-        }
-        let calc_h = function (i) {
-          return (
-            cheight - parseInt((wave_arr[i] / 1023) * (cheight - 2), 10) - 2
-          )
-        }
-        var c = document.getElementById("canvas")
-        var ctx = c.getContext("2d")
-        ctx.beginPath()
-        ctx.clearRect(0, 0, cwidth, cheight)
-        // console.log(ctx);
-        ctx.moveTo(0, calc_h(0))
-        for (i = 0; i < wave_arr_length; i++) {
-          ctx.lineTo(calc_w(i), calc_h(i))
-        }
-        ctx.stroke()
-      }, 5)
+        waveform_obj.draw_waveform()
+        the_canvas.show()
+      }, canvas_delay)
+      meas_div.show()
     } else {
       meas_div.html(data.message).show()
     }
@@ -272,15 +239,17 @@ function widget(data) {
     default:
       $("#adj_controls, #trigger_controls").show()
   }
+
   let param_set = 0 // only one param set
-  for (let i = 0; i < data.params[param_set].length; i++) {
-    data.params[param_set][i].dig_num = data.digit_num
-    data.params[param_set][i].cmd = data.cmd
-    controls += display_param(data.params[param_set][i])
+  if (data.params[param_set]) {
+    for (let i = 0; i < data.params[param_set].length; i++) {
+      data.params[param_set][i].dig_num = data.digit_num
+      data.params[param_set][i].cmd = data.cmd
+      controls += display_param(data.params[param_set][i])
+    }
   }
   // controls += display_param({ label: "<span class='hide'>a</span>", type: "param_buttons"})
   $("#params").html(controls)
-
 
   $(".slider_input_div").each(function (indx) {
     const item = $(this).attr("item")
@@ -300,9 +269,7 @@ function widget(data) {
           break
         case "offset":
         case "cv_val":
-          item_input.val(
-            ((out_fs * item_val) / item_max - out_offset).toFixed(2)
-          )
+          item_input.val(((out_fs * item_val) / item_max - out_offset).toFixed(2))
           break
       }
     }
@@ -322,7 +289,7 @@ function widget(data) {
     selected_data = data.params[0].find(is_selected)
   }
   if (selected_data) {
-    dbugger.print("Selected: ", selected_data)
+    // dbugger.print("Selected: ", selected_data)
     //let selected_data=data.params[0][data.param_num];
     //let selected_param= $($("#params .param_div input[component]")[data.param_num]);
     let selected_param = $("#params .param_div .selected input")
@@ -331,8 +298,7 @@ function widget(data) {
     if (
       !(
         selected_data.type === "radio" ||
-        (selected_data.type === "select" &&
-          selected_data.values.split(",").length === 1)
+        (selected_data.type === "select" && selected_data.values.split(",").length === 1)
       )
     ) {
       // console.log("Component: " +the_input.attr("component"));
@@ -376,8 +342,7 @@ function widget(data) {
   const selected_type = $("#param_input").attr("type")
   $("#lr_buttons button, #inc_controls button").prop(
     "disabled",
-    (selected_type !== "number" && selected_type !== "text") ||
-      $("#param_input").is(":hidden")
+    (selected_type !== "number" && selected_type !== "text") || $("#param_input").is(":hidden")
   )
 }
 
@@ -507,7 +472,7 @@ function widget(data) {
   }
 
   // macros
-  let the_macro = {
+  the_macro = {
     state: "IDLE",
     recorded_macro: [],
     macro_elem: $("#macro"),
@@ -519,9 +484,7 @@ function widget(data) {
       return this.state === "REC"
     },
     macro_exists: function () {
-      return (
-        Array.isArray(this.recorded_macro) && this.recorded_macro.length > 0
-      )
+      return Array.isArray(this.recorded_macro) && this.recorded_macro.length > 0
     },
     set_buttons: function () {
       this.exe_button.prop("disabled", !this.macro_exists())
@@ -553,9 +516,7 @@ function widget(data) {
       switch (this.state) {
         case "IDLE":
           background_color = ""
-          $("#macro_buttons .indicator")
-            .html("&nbsp;")
-            .css("background-color", background_color)
+          $("#macro_buttons .indicator").html("&nbsp;").css("background-color", background_color)
           this.record_button
             .html("Record")
             .attr("title", "Click to Start Recording")
@@ -566,9 +527,7 @@ function widget(data) {
           break
         case "REC":
           background_color = "#f00"
-          $("#rec_state")
-            .html(this.state)
-            .css("background-color", background_color)
+          $("#rec_state").html(this.state).css("background-color", background_color)
           this.exe_button.prop("disabled", true)
           this.record_button
             .html("Stop")
@@ -579,12 +538,8 @@ function widget(data) {
           break
         case "EXEC":
           background_color = "#080"
-          $("#play_state")
-            .html(this.state)
-            .css("background-color", background_color)
-          this.record_button
-            .prop("disabled", true)
-            .css("background-color", "#888")
+          $("#play_state").html(this.state).css("background-color", background_color)
+          this.record_button.prop("disabled", true).css("background-color", "#888")
           this.exe_button.prop("disabled", true)
           this.snapshot_button.prop("disabled", true)
           break
@@ -646,27 +601,6 @@ function widget(data) {
   }
   the_macro.init()
   the_macro.set_buttons()
-
-  const the_queue = {
-    queue: [],
-    busy: false,
-    enqueue: function (item) {
-      this.queue.push(item)
-    },
-    dequeue: function () {
-      if (this.busy) {
-        console.log("Hey, I'm busy!")
-      } else {
-        return this.queue.shift()
-      }
-    },
-    data_available: function () {
-      return this.queue.length > 0 && !this.busy
-    },
-    debug: function () {
-      console.log(this.queue)
-    },
-  }
 
   function take_snapshot(data) {
     // todo capture all user data
@@ -784,17 +718,6 @@ function widget(data) {
       console.log(e)
       data.err = e
     }
-  }
-
-  function send_cmd(cmd) {
-    if (the_macro.is_recording() && cmd !== "\n") {
-      the_macro.append(cmd)
-    }
-    the_queue.enqueue(cmd)
-  }
-
-  function refresh_screen() {
-    send_cmd("\n")
   }
 
   $("#refresh_button").on("click", function () {
