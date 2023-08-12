@@ -19,6 +19,10 @@
         <h1>Welcome to the Spankulator Control Panel</h1>
         <h2>Please Choose a Port</h2>
         <div id="ports_table"></div>
+        <div id="chrome-version">Chrome ver: </div>
+        <div id="electron-version">Electron ver: </div>
+        <div id="node-version">Node ver: </div>
+        <div id="serialport-version">Serialport ver: </div>
     </div>
     <div id="control_div">
         <div id="head_div">
@@ -175,6 +179,8 @@ renderer.js will be executed in the renderer process for index.html.
 All of the Node.js APIs are available in this process.
  -->
 <script src="./serial_port.js"></script>
+<script src="./waveform_obj.js"></script>
+<script src="./send_cmd.js"></script>
 <script src="./renderer.js"></script>
 
 </html>
