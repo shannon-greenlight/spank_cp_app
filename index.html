@@ -8,6 +8,7 @@
     <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
 
     <link rel="stylesheet" href="css/cp.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="css/spank_cp.css" type="text/css" media="all" />
     <link rel="stylesheet" href="css/serial_port.css" type="text/css" media="all" />
     <link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
     <link rel="stylesheet" id="twentyseventeen-block-style-css" href="css/blocks.css" type="text/css" media="all" />
@@ -51,10 +52,11 @@
                 <label id="param_label" for="display_div">Parameters</label>
                 <div id="display_div" class="display_box">
                     <h2 id="spank_fxn">Fxn</h2>
+                    <div id="meas_div">
+                        <canvas id="canvas" height="200" width="415"></canvas>
+                        <div id="message_div"></div>
+                    </div>
                     <div id="param_box">
-                        <div id="meas_div">
-                            <canvas id="canvas" height="200" width="415"></canvas>
-                        </div>
                         <div id="params"></div>
                         <div id="param_buttons">
                             <button id="up_button" class="cmd_button" data-ref="[A" title="Previous Parameter">
@@ -86,17 +88,26 @@
                                 Dn
                             </button>
                         </div>
-                    </div>
-                    <div id="input_div">
-                        <div class="param_div">
-                            <div id="param_head" class="param param_head">
-                                <strong></strong>
+                        <div id="input_div">
+                            <div class="param_div">
+                                <div id="param_head" class="param param_head">
+                                    <strong></strong>
+                                </div>
+                                <!--                        <div id="param_value" class="param">-->
+                                <!--                            <input id="param_input" type="number" min="2" max="99" value="99">-->
+                                <!--                        </div>-->
+                                <div class="clear"></div>
                             </div>
-                            <!--                        <div id="param_value" class="param">-->
-                            <!--                            <input id="param_input" type="number" min="2" max="99" value="99">-->
-                            <!--                        </div>-->
-                            <div class="clear"></div>
                         </div>
+                    </div>
+                    <div id="activate_controls">
+                        <button id="activate_button" class="controls_button">Activate</button>
+                    </div>
+                    <div id="draw_controls">
+                        <button id="draw_button" class="controls_button">Draw Waveform</button>
+                    </div>
+                    <div id="cancel_draw_controls">
+                        <button id="cancel_draw_button" class="controls_button">Cancel Draw Waveform</button>
                     </div>
                 </div>
             </div>
@@ -172,15 +183,24 @@
             </div>
         </div>
     </div>
+    <div id="busy_div">
+        <div><img /><br />Please Wait</div>
+    </div>
 </body>
 
 <!-- 
 renderer.js will be executed in the renderer process for index.html.
 All of the Node.js APIs are available in this process.
  -->
+<script src="./spank_device.js"></script>
+<script src="./dbugger.js"></script>
 <script src="./serial_port.js"></script>
 <script src="./waveform_obj.js"></script>
 <script src="./send_cmd.js"></script>
+<script src="./data_handler.js"></script>
+<script src="./spank_obj.js"></script>
+<script src="./the_macro.js"></script>
 <script src="./renderer.js"></script>
+<script src="./receive_data.js"></script>
 
 </html>

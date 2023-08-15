@@ -40,8 +40,14 @@ listSerialPorts()
 let chosen_port = "COM1"
 let port
 let parser
+
 let receive_data = function (text) {
   console.log("Receive Data Unset!")
+}
+
+let force_use_busy
+function use_busy() {
+  return device.type === "Bonkulator" && force_use_busy
 }
 
 function prep_request(cmd) {
@@ -49,22 +55,29 @@ function prep_request(cmd) {
   //   if (cmd === "") res.fail = true
   res.cmd = cmd + "\r"
   if (!res.fail) {
-    console.log("Sending: " + cmd + "...")
+    console.log("Sending: " + cmd)
+    if (use_busy()) {
+      $("#busy_div").fadeIn(10)
+      force_use_busy = false
+    }
   }
   return res
 }
 
 function request_data(cmd) {
-  port.write(cmd, function (err) {
+  // console.log("Requesting: " + cmd)
+  const buff = Buffer.from(cmd)
+  port.write(buff, function (err) {
     if (err) {
       return console.log("Error on write: ", err.message)
     }
-    console.log(`Message: ${cmd} sent to serial port: ${chosen_port}`)
+    console.log(`Command: ${cmd} sent to serial port: ${chosen_port}`)
   })
 }
 
 ;(function ($) {
   // console.log("Hey there!!!!!");
+  $("#busy_div").fadeOut(1).css("opacity", 1)
   $("#ports").on("click", "td:first-child", function () {
     chosen_port = $(this).html()
     document.title += ` on ${chosen_port}`
@@ -77,6 +90,7 @@ function request_data(cmd) {
     parser.on("data", function (text) {
       if (text > "") {
         receive_data(text)
+        if (true || use_busy()) $("#busy_div").fadeOut(10)
       }
     })
     console.log("Timeout: " + listPortsTimeout)
@@ -86,14 +100,18 @@ function request_data(cmd) {
     })
     console.log(chosen_port)
 
-    // request USB Direct mode on Bonkulator
+    // request USB Direct mode
     port.write("U1\r", function (err) {
       if (err) {
         return console.log("Error on write: ", err.message)
       }
       console.log("USB Direct Mode Enabled.", port.read())
+      setTimeout(function () {
+        port.write("\r")
+      }, 1000)
     })
   })
   $("#device_name").css({ "margin-bottom": "15px" })
+  $("#busy_div img").attr("src", "img/loading.gif")
   $("#head_div>img").attr("src", "img/xparent_logo_444.png")
 })(jQuery)

@@ -29,9 +29,9 @@ h3 {
   font-family: PermanentMarker, sans-serif;
 }
 
-#refresh_button {
+/* #refresh_button {
   display: none;
-}
+} */
 
 .entry-content {
   /*height: 975px;*/
@@ -119,7 +119,8 @@ strong {
   grid-column: 1 / span 2;
   padding: 5px;
   font-size: 2.5rem;
-  border-bottom: 2px solid #a9a;
+  border: 2px solid #a9a;
+  border-bottom: 0px solid #a9a;
   background-color: #d6b6ea;
   /*margin-bottom: 10px;*/
 }
@@ -307,18 +308,6 @@ strong {
   padding-top: 5px;
   padding-left: 5px;
   padding-right: 5px;
-}
-
-#trigger_buttons {
-  /* height: 343px; */
-  /* padding-top: 10px; */
-  display: grid;
-  grid-template-columns: auto auto;
-  /*justify-content: left;*/
-  grid-column-gap: 3px;
-  grid-template-rows: auto 25px;
-  grid-row-gap: 15px;
-  justify-items: center;
 }
 
 #trigger_buttons button {
@@ -522,13 +511,6 @@ label[for="macro"] {
   text-transform: capitalize;
 }
 
-.tog_label {
-  padding-top: 15px;
-  width: 75px;
-  font-weight: bold;
-  text-align: center;
-}
-
 .led_button {
   width: 25px !important;
 }
@@ -546,26 +528,60 @@ label[for="macro"] {
   margin-bottom: 0px;
 }
 
-.lighted_button {
-  /* height: 25px; */
-  border: 2px solid #666;
-  border-radius: 25px;
-  margin-top: -10px;
-}
-
-.led_button {
-  height: 25px;
-}
-
 .lighted_button:hover {
   border-color: #a0b0a1;
-  .lighted_button:disabled:hover {
-    border-color: #666;
-  }
 }
 
-#canvas {
-  /*border: 1px dashed;*/
+.lighted_button:disabled:hover {
+  border-color: #666;
+}
+
+#meas_div {
+  position: relative;
+  text-align: center;
+  min-height: 40px;
+}
+
+#message_div {
+  position: absolute;
+  bottom: 0px;
+  font-size: 14px;
+  width: 100%;
+  text-align: left;
+}
+
+#message_div h2 {
+  text-align: center;
+}
+
+.big_message {
+  position: relative !important;
+  height: 300px;
+  /* font-size: 2.5rem; */
+  text-align: center !important;
+}
+
+#busy_div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  width: 1100px;
+  min-height: 967px;
+  background-color: #474444;
+  font-size: 2em;
+  opacity: 0;
+}
+
+#busy_div div {
+  width: 250px;
+  background-color: rgb(199, 201, 187);
+  border-radius: 15px;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+  border: 4px solid;
 }
 
 .slider_input_div {
@@ -578,16 +594,6 @@ label[for="macro"] {
 .slider_input_div input:hover {
   background-color: #c4bcb5;
   border: 1px solid #a09e9e;
-}
-
-.slider_input_div input,
-.slider_input_div input:disabled {
-  width: 50px;
-  text-align: right;
-  margin-left: 5px;
-  background-color: transparent !important;
-  border: 1px solid transparent;
-  padding: 0;
 }
 
 .slider_input_div input:disabled {
@@ -629,4 +635,14 @@ label[for="macro"] {
 
 #head_div > * {
   /*border: 1px solid;*/
+}
+
+#param_ctrl {
+  display: none;
+  text-align: right;
+}
+
+#param_ctrl button {
+  font-size: 0.6em;
+  padding: 0.4em;
 }
