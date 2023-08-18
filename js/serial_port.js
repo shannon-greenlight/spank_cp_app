@@ -112,6 +112,6 @@ function request_data(cmd) {
     })
   })
   $("#device_name").css({ "margin-bottom": "15px" })
-  $("#busy_div img").attr("src", "img/loading.gif")
-  $("#head_div>img").attr("src", "img/xparent_logo_444.png")
+  $("#busy_div img").attr("src", "../img/loading.gif")
+  $("#head_div>img").attr("src", "../img/xparent_logo_444.png")
 })(jQuery)
