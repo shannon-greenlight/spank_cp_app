@@ -22,10 +22,12 @@ function widget() {
 
   $("#param_label").html(data_handler.data.fxn + " Parameters")
   $("#input_div .param_div").append('<div id="param_value" class="param"></div>')
-  $("#repeat_on").css("background-color", data_handler.data.repeat_on === "ON" ? "#fbd310" : "#aaa")
-  $("#trigger_on").css("background-color", data_handler.data.triggered === "ON" ? "Red" : "#aaa")
-  $("#trigger_button").css("background-color", data_handler.data.gate === "ON" ? "Green" : "#aaa")
-  $("#tog_button").css("background-color", data_handler.data.toggle === "ON" ? "Blue" : "#aaa")
+
+  repeat_on_button.set(data_handler.data.repeat_on)
+  trigger_on_button.set(data_handler.data.triggered)
+  trigger_button.set(data_handler.data.gate)
+  tog_button.set(data_handler.data.toggle)
+
   $("#ext_trig_button")
     .html(data_handler.data.ext_trigger_disable)
     .css("background-color", data_handler.data.ext_trigger_disable === "enabled" ? "Green" : "#aaa")
@@ -44,9 +46,7 @@ function widget() {
     if (spank_obj.in_lfo_fxn()) {
       the_canvas.show()
       $("#message_div").hide()
-      setTimeout(function () {
-        waveform_obj.draw_waveform()
-      }, canvas_delay)
+      waveform_obj.draw_waveform()
     } else {
       the_canvas.hide()
       $("#message_div").html(data_handler.data.message).show()
