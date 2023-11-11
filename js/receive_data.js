@@ -1,5 +1,3 @@
-// const { data } = require("jquery")
-
 function take_snapshot(data) {
   // todo capture all user data
   // console.log("Snapshot data", data)
@@ -31,8 +29,8 @@ receive_data = function (text) {
   }
 
   if (data_handler.status_received) {
-    dbugger.print("Receiving Status:")
-    dbugger.print(data_handler.status)
+    dbugger.print("Receiving Status:", false)
+    dbugger.print(data_handler.status, false)
     device.receive_status()
   } else {
     console.log("Receiving Data:", data_handler.data)
