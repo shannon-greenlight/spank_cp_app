@@ -12,7 +12,7 @@ let data_handler = {
     }
   },
   display_param: function (data) {
-    // console.log(data);
+    // console.log(data)
     const param_num = data.param_num
     let data_value = data.value
     let tail
@@ -175,7 +175,8 @@ let data_handler = {
   },
   fxn_button: function (i) {
     let fxn = this.data.fxns[i]
-    let selected = this.data.fxn === fxn ? "selected " : ""
+    let selected = fxn.indexOf(this.data.fxn) === 0 ? "selected " : ""
+    // let selected = this.data.fxn === fxn ? "selected " : ""
     //console.log(fxn,i,selected);
     let out = `<button id="fxn_button_${i}" title="f${i}" class="${selected}cmd_button" data-ref="f${i}">${fxn}</button>`
     return out
