@@ -59,6 +59,7 @@ setInterval(function () {
 
 $("#activate_button").on("click", function () {
   send_cmd("!")
+  // refresh_screen()
 })
 
 let params = $("#params")
@@ -102,7 +103,7 @@ param_value.on("change focusin", "#param_input, input", function () {
 param_value
   .on("change", "#param_input", function () {
     dbugger.print("param_value Changin!", false)
-    if ($(this).attr("type") === "text" && !$(this).hasClass("sequence")) {
+    if ($(this).attr("type") === "text" || $(this).hasClass("sequence")) {
       send_cmd("$" + $(this).val())
     } else {
       send_cmd($(this).val())
@@ -171,14 +172,18 @@ function set_selected_param(selected_data) {
 }
 
 function set_param_nav_buttons() {
-  $("#control_div #param_box button[data-ref]").prop("disabled", false)
-  const num_params = $("#params .param_div").length
-  dbugger.print(`Num params: ${num_params}`, false)
-  $("#param_buttons button").prop("disabled", num_params < 2)
-  const selected_type = $("#param_input").attr("type")
-  $("#lr_buttons button, #inc_controls button").prop(
-    "disabled",
-    selected_type !== "number" && selected_type !== "text"
-  )
-  dbugger.print(`Selected type: ${selected_type}`, false)
+  if (!spank_obj.in_user_fxn()) {
+    $("#control_div #param_box button[data-ref]").prop("disabled", false)
+    const num_params = $("#params .param_div").length
+    dbugger.print(`Num params: ${num_params}`, true)
+    $("#param_buttons button").prop("disabled", num_params < 2)
+    const selected_type = $("#param_input").attr("type")
+    $("#lr_buttons button, #inc_controls button").prop(
+      "disabled",
+      selected_type !== "number" && selected_type !== "text"
+    )
+    dbugger.print(`Selected type: ${selected_type}`, true)
+  } else {
+    $("#param_buttons button").prop("disabled", false)
+  }
 }
