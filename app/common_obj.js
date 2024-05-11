@@ -1,4 +1,13 @@
-let spank_obj = {
+let common_obj = {
+  // Bonkulator stubs
+  in_user_waveforms: function () {
+    // console.log(data_handler.data)
+    return false
+  },
+  in_bounce: function () {
+    // console.log(data_handler.data)
+    return false
+  },
   // Spankulator functions
   in_settings_fxn: function () {
     return data_handler.data.fxn === "Settings"

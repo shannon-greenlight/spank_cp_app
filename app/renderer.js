@@ -5,7 +5,7 @@ let snapshot = ""
 const out_fs = 128 / 12
 const out_offset = out_fs / 2
 let cmd_buttons
-let legal_values
+// let legal_values
 const cv_offset = 5.4
 const zeroPad = (num, places) => String(num).padStart(places, "0")
 
@@ -14,7 +14,7 @@ function widget() {
   data_handler.render_device_name()
 
   const activate_button = $("#activate_button")
-  if (spank_obj.param_is_active()) {
+  if (common_obj.param_is_active()) {
     activate_button.fadeIn()
   } else {
     activate_button.fadeOut()
@@ -37,13 +37,13 @@ function widget() {
   $("#analog_label").html(data_handler.data.quantized)
 
   let controls = ""
-  if (spank_obj.in_user_fxn()) {
-    controls += data_handler.display_param(spank_obj.get_user_string())
+  if (common_obj.in_user_fxn()) {
+    controls += data_handler.display_param(common_obj.get_user_string())
     legal_values = data_handler.data.sequence.legal_values
   }
-  if (data_handler.data.message && !spank_obj.in_user_fxn()) {
+  if (data_handler.data.message && !common_obj.in_user_fxn()) {
     meas_div.show()
-    if (spank_obj.in_lfo_fxn()) {
+    if (common_obj.in_lfo_fxn()) {
       the_canvas.show()
       $("#message_div").hide()
       waveform_obj.draw_waveform()
@@ -54,13 +54,13 @@ function widget() {
   } else {
     meas_div.hide()
   }
-  if (spank_obj.in_bounce_fxn()) {
+  if (common_obj.in_bounce_fxn()) {
     $("#message_div").addClass("bounce_message")
   } else {
     $("#message_div").removeClass("bounce_message")
   }
 
-  if (spank_obj.in_wifi_fxn() || spank_obj.in_settings_fxn()) {
+  if (common_obj.in_wifi_fxn() || common_obj.in_settings_fxn()) {
     $("#adj_controls, #trigger_controls").hide()
   } else {
     $("#adj_controls, #trigger_controls").show()
@@ -72,37 +72,43 @@ function widget() {
     const item = $(this).attr("item")
     const item_max = data_handler.data[$(this).attr("max")]
     const item_val = data_handler.data[item]
-    const items = $(`#${item},#${item}_slider`)
-    const item_input = $(`#${item}`)
+    const slider_item = $(`#${item}_slider`)
+    const input_item = $(`#${item}`)
     const item_slider = $(`#${item}_slider`)
     if (data_handler.data[item] === "disabled") {
-      items.prop("disabled", true)
+      // slider_item.prop("disabled", true)
+      $(this).css("visibility", "hidden")
+      slider_item.css("visibility", "hidden")
     } else {
-      items.prop("disabled", false).attr("max", item_max)
+      // dbugger.print(`Item: ${item} val: ${item_val}`, true)
+      // console.log(item_slider)
+      // slider_item.prop("disabled", false).attr("max", item_max)
+      $(this).css("visibility", "visible")
+      slider_item.css("visibility", "visible")
       item_slider.val(item_val)
       switch (item) {
         case "scale":
-          item_input.val(Math.round((100 * item_val) / item_max))
+          input_item.val(Math.round((100 * item_val) / item_max))
           break
         case "offset":
         case "cv_val":
-          item_input.val(((out_fs * item_val) / item_max - out_offset).toFixed(2))
+          input_item.val(((out_fs * item_val) / item_max - out_offset).toFixed(2))
           break
       }
     }
   })
 
   // now set selected components input control
-  let selected_data = spank_obj.find_selected_data()
+  let selected_data = common_obj.find_selected_data()
   if (selected_data) {
-    set_selected_param(selected_data)
+    params_obj.set_selected_param(selected_data)
   } else {
     $("#input_div, #inc_controls").hide()
   }
 
   data_handler.draw_fxn_buttons()
 
-  set_param_nav_buttons()
+  params_obj.set_param_nav_buttons()
 }
 
 ;(function ($) {
@@ -115,6 +121,8 @@ function widget() {
     // $("#snapshot_text").html(snapshot);
     the_macro.put(snapshot)
   })
+
+  params_obj.on_load()
 
   $(".slider_input_div").each(function (indx) {
     const item = $(this).attr("item")
