@@ -29,9 +29,10 @@ async function listSerialPorts() {
       if (indx === 0) return
       const label = $(this).find("td:nth-child(6)").html()
       const vendorID = $(this).find("td:nth-child(7)").html()
-      // console.log(`Label: ${label} vendorID: ${vendorID}`)
+      console.log($(this).html())
+      console.log(`Label: ${label} vendorID: ${vendorID}`)
       if (label) {
-        if (label.indexOf(device.port_label) === 0 && vendorID === "2341") {
+        if (label.indexOf(device.port_label) === 0 || vendorID === "2341") {
           $(this)
             .addClass("enable_port")
             .find("td:nth-child(6)")

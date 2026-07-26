@@ -3,7 +3,7 @@
 
 device = {
   type: "Spankulator",
-  title: "Spankulator Control Panel v3.0.2",
+  title: "Spankulator Control Panel v3.0.3",
   port_label: "Arduino NANO 33 IoT",
   take_snapshot: function (data, out) {
     return out

@@ -52,3 +52,5 @@ checkin_comment.txt
 config.csv
 backit.bat
 changes.bat
+
+package-lock.json
